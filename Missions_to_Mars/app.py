@@ -1,8 +1,17 @@
 from flask import Flask, render_template, redirect
-import scrape_costa
+
+# Connect to scrape python file
+import scrape_mars
+
+# Get Mongo library
+import pymongo
 
 # Create an instance of Flask
 app = Flask(__name__)
+
+# Setup mongo connection
+conn = "mongodb://localhost:27017"
+client = pymongo.MongoClient(conn)
 
 # Route to render index.html template 
 @app.route("/")
@@ -17,8 +26,8 @@ def home():
 @app.route("")
 def ():
 
-    # Run the scrape function
-    costa_data = scrape_costa.scrape_info()
+   # Run the scrape function
+    mars_data = scrape_mars.scrape_info()
 
        
 
