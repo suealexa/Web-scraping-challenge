@@ -16,18 +16,17 @@ client = pymongo.MongoClient(conn)
 # Route to render index.html template 
 @app.route("/")
 def home():
-
-    
     # Return template and data
     return render_template("index.html", )
 
 
 # Route that will trigger the scrape function
-@app.route("")
-def ():
+@app.route("/scrape")
+def scrape():
 
    # Run the scrape function
-    mars_data = scrape_mars.scrape_info()
+    mars_data = scrape.scrape_info()
+
 
        
 
