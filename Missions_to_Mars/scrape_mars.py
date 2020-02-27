@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[46]:
+# In[1]:
 
 
 # Dependencies
@@ -11,7 +11,7 @@ from splinter import Browser
 import requests
 
 
-# In[47]:
+# In[2]:
 
 
 # Set the executable path and initialize the chrome browser in splinter
@@ -21,7 +21,7 @@ browser = Browser('chrome', **executable_path, headless=False)
 
 # ## NASA Mars News
 
-# In[48]:
+# In[3]:
 
 
 # Go to url
@@ -29,35 +29,35 @@ url = 'https://mars.nasa.gov/news'
 browser.visit(url)
 
 
-# In[49]:
+# In[4]:
 
 
 # Iterate through all pages
-    # HTML object
-    html = browser.html
-    # Parse HTML with Beautiful Soup
-    soup = BeautifulSoup(html, 'html.parser')
-    # Retrieve first element that contain title information
-    news_title = soup.find('div', class_='content_title').get_text()
-    # Retrieve first element that contains paragraph text
-    # news_p = soup.find('div', class_= "article teaser body").get_text()
+# HTML object
+html = browser.html
+# Parse HTML with Beautiful Soup
+soup = BeautifulSoup(html, 'html.parser')
+# Retrieve first element that contain title information
+news_title = soup.find('div', class_='content_title').get_text()
+# Retrieve first element that contains paragraph text
+# news_p = soup.find('div', class_= "article teaser body").get_text()
 
 
-# In[50]:
+# In[5]:
 
 
 # Examine the results, then determine element that contains sought info
 print(soup.prettify())
 
 
-# In[51]:
+# In[6]:
 
 
 news_title = "NASA Updates Mars 2020 Mission Environmental Review"
 news_p = "NASA and the Department of Energy have completed a more detailed risk analysis for the Mars 2020 rover launch from Florida"
 
 
-# In[52]:
+# In[7]:
 
 
 # Use the parent element to find the first 'a' tag and save it as `news_title`
@@ -65,11 +65,13 @@ slide_elem = soup.select_one('ul.item_list li.slide')
 
 news_title = slide_elem.find("div", class_='content_title').get_text()
 news_title
+news_paragraph = slide_elem.find("div", class_="article_teaser_body").get_text()
+print(news_paragraph)
 
 
 # ## JPL Mars Space Images - Featured Image
 
-# In[53]:
+# In[8]:
 
 
 # Go to url
@@ -77,7 +79,7 @@ url = 'https://www.jpl.nasa.gov/spaceimages/?search=&category=Mars'
 browser.visit(url)
 
 
-# In[54]:
+# In[9]:
 
 
 # Find and click the full image button
@@ -85,7 +87,7 @@ full_image_elem = browser.find_by_id('full_image')
 full_image_elem.click()
 
 
-# In[55]:
+# In[10]:
 
 
 # Find the more info button and click that
@@ -94,7 +96,7 @@ more_info_elem = browser.find_link_by_partial_text('more info')
 more_info_elem.click()
 
 
-# In[56]:
+# In[11]:
 
 
 # Parse the resulting html with soup
@@ -102,7 +104,7 @@ html = browser.html
 img_soup = BeautifulSoup(html, 'html.parser')
 
 
-# In[57]:
+# In[12]:
 
 
 #Find the relative image url
@@ -112,7 +114,7 @@ img_url_rel
 
 # ## Mars Weather
 
-# In[58]:
+# In[13]:
 
 
 # Go to url
@@ -120,7 +122,7 @@ twit_url = 'https://twitter.com/marswxreport?lang=en'
 browser.visit(twit_url)
 
 
-# In[59]:
+# In[14]:
 
 
 # Parse with Beautiful Soup
@@ -128,24 +130,27 @@ html = browser.html
 soup = BeautifulSoup(html,'html.parser')
 
 
-# In[60]:
+# In[15]:
 
 
 # Find tweet
-mars_weather = soup.find('div', class_='js-tweet-text-container').find('p', class_='TweetTextSize TweetTextSize--normal js-tweet-text tweet-text').text.split('pic')[0] 
+#mars_weather = soup.find('div', class_='js-tweet-text-container').find('p', class_='TweetTextSize TweetTextSize--normal js-tweet-text tweet-text').text.split('pic')[0] 
+#temp = soup.find('div', attrs={"class": "tweet", "data-name": "Mars Weather"})
+mars_weather = soup.find("p", class_="TweetTextSize TweetTextSize--normal js-tweet-text tweet-text").text
+
 mars_weather
 
 
 # ## Mars Facts
 
-# In[ ]:
+# In[16]:
 
 
 # Go to url
 url = 'https://space-facts.com/mars/'
 
 
-# In[ ]:
+# In[17]:
 
 
 # Use pandas to import data
@@ -153,7 +158,7 @@ facts = pd.read_html(url)
 facts
 
 
-# In[ ]:
+# In[18]:
 
 
 # Use pandas to convert HTML to dataframe
@@ -161,7 +166,7 @@ facts_df = facts[0]
 facts_df
 
 
-# In[ ]:
+# In[19]:
 
 
 # Use pandas to convert df to a HTML table string
@@ -171,7 +176,7 @@ print(mars_facts)
 
 # ## Mars Hemispheres
 
-# In[25]:
+# In[20]:
 
 
 # Go to url
@@ -179,61 +184,64 @@ url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=tar
 browser.visit(url)
 
 
-# In[26]:
+# In[21]:
 
 
-# Parse with Beautiful Soup
+# HTML Object
 html = browser.html
 # Parse HTML with Beautiful Soup
 soup = BeautifulSoup(html, 'html.parser')
 
 
-# In[44]:
+# In[22]:
 
 
 # Get hemisphere title
 search = soup.find('div', id='product-section')
-#title = search.find_all('div', class_= 'item')
+
 for heading in soup.find_all("h3"):
     print(heading.text.strip())
 
 
-# In[45]:
+# In[23]:
 
 
 image = soup.find('div', class_='item')
 for link in soup.find_all("a", "href"):
-    print(link.text.strip())
+   print(link.text.strip())
 
 
-# In[ ]:
+# In[24]:
 
 
 # For loop
+for i in search:
 # Empty list
-hemispheres = []
-# Save urls
-title = 
+    mars_hemispheres = []
+# Get titles 
+    title = search.find_all('div', class_= 'item')  
+# Save url
+    url = 'https://astrogeology.usgs.gov'
 # Iterate through images
-browser.find_by('a.product-item')
-# Return to top of list
-browser.back()
-hemisphere_urls.append{"title":title, "image":image}
-
-
-# In[ ]:
-
-
-hemisphere_image_urls = [
-    {"title": "Valles Marineris Hemisphere", "img_url": "..."},
-    {"title": "Cerberus Hemisphere", "img_url": "..."},
-    {"title": "Schiaparelli Hemisphere", "img_url": "..."},
-    {"title": "Syrtis Major Hemisphere", "img_url": "..."},
-]
-
+    browser.find_by_id('a.product-item')
+#Store data in dictionary   
+    mars_hemispheres.append({"title":title, "image":image})
+# Return results
+    return mars_hemispheres    
+# Return to top of list    
+    browser.back()
 
 # In[ ]:
 
 
 # Convert notebook into Python script
 
+
+# In[26]:
+
+
+# Close the browser after scraping
+browser.quit()
+
+
+# In[ ]:
