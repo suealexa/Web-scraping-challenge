@@ -19,28 +19,32 @@ executable_path = {'executable_path': 'chromedriver.exe'}
 browser = Browser('chrome', **executable_path, headless=False)
 
 
-# ## NASA Mars News
+def scrape_info():
+    browser = init_browser()
 
-# In[3]:
+ # Go to website
+    url = 'https://mars.nasa.gov/news'
+    browser.visit(url)
 
-
-# Go to url
-url = 'https://mars.nasa.gov/news'
-browser.visit(url)
-
-
-# In[4]:
-
+    time.sleep(1)  
+    
+    # Scrape page into Soup
+    html = browser.html
+    soup = BeautifulSoup(html, "html.parser")
 
 # Iterate through all pages
 # HTML object
 html = browser.html
 # Parse HTML with Beautiful Soup
 soup = BeautifulSoup(html, 'html.parser')
+
 # Retrieve first element that contain title information
-news_title = soup.find('div', class_='content_title').get_text()
+news_title = soup.find("li", class_="slide").find('div', class_='content_title').text
+#print(news_title)
+
 # Retrieve first element that contains paragraph text
-# news_p = soup.find('div', class_= "article teaser body").get_text()
+news_p = soup.find("li", class_="slide").find('div', class_= "article_teaser_body").text
+#print(news_p)
 
 
 # In[5]:
@@ -63,9 +67,9 @@ news_p = "NASA and the Department of Energy have completed a more detailed risk 
 # Use the parent element to find the first 'a' tag and save it as `news_title`
 slide_elem = soup.select_one('ul.item_list li.slide')
 
-news_title = slide_elem.find("div", class_='content_title').get_text()
+news_title = slide_elem.find("div", class_='content_title').text
 news_title
-news_paragraph = slide_elem.find("div", class_="article_teaser_body").get_text()
+news_p = soup.find("li", class_="slide").find('div', class_= "article_teaser_body").text
 print(news_paragraph)
 
 
@@ -141,9 +145,8 @@ mars_weather = soup.find("p", class_="TweetTextSize TweetTextSize--normal js-twe
 mars_weather
 
 
-# ## Mars Facts
+# Mars Facts
 
-# In[16]:
 
 
 # Go to url
@@ -174,74 +177,45 @@ mars_facts = facts_df.to_html()
 print(mars_facts)
 
 
-# ## Mars Hemispheres
-
-# In[20]:
+# Mars Hemispheres
 
 
 # Go to url
 url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
 browser.visit(url)
 
-
-# In[21]:
-
-
 # HTML Object
 html = browser.html
 # Parse HTML with Beautiful Soup
 soup = BeautifulSoup(html, 'html.parser')
 
+# Create empty list to store info
+mars_hemispheres = []
 
-# In[22]:
+  # Retrieve the parent divs for all articles
+results = soup.find("div", class_ = "result-list")
+hemispheres = results.find_all("div", class_="item")  
 
+# Create empty list to store info
+mars_hemispheres = []
 
-# Get hemisphere title
-search = soup.find('div', id='product-section')
+  # Retrieve the parent divs for all articles
+results = soup.find("div", class_ = "result-list")
+hemispheres = results.find_all("div", class_="item")  
 
-for heading in soup.find_all("h3"):
-    print(heading.text.strip())
-
-
-# In[23]:
-
-
-image = soup.find('div', class_='item')
-for link in soup.find_all("a", "href"):
-   print(link.text.strip())
-
-
-# In[24]:
-
-
-# For loop
-for i in search:
-# Empty list
-    mars_hemispheres = []
-# Get titles 
-    title = search.find_all('div', class_= 'item')  
-# Save url
-    url = 'https://astrogeology.usgs.gov'
-# Iterate through images
+# Loop through results to retrieve hemisphere title and full image
+for hemisphere in hemispheres:
+    title = hemisphere.find("h3").text
+    
+    # Save base url
+    base_url = 'https://astrogeology.usgs.gov'
+    
+    # Iterate through images
     browser.find_by_id('a.product-item')
-#Store data in dictionary   
-    mars_hemispheres.append({"title":title, "image":image})
-# Return results
-    return mars_hemispheres    
-# Return to top of list    
-    browser.back()
-
-# In[ ]:
-
-
-# Convert notebook into Python script
-
-
-# In[26]:
-
-
-# Close the browser after scraping
-browser.quit()
-
-
-# In[ ]:
+    full_image = hemisphere.find("a")["href"]
+    image = base_url + full_image
+    
+    mars_hemispheres.append({"title":title, "image":image}) 
+   
+ # Return results
+print(mars_hemispheres) 
